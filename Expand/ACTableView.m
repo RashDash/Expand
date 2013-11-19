@@ -9,7 +9,6 @@
 
 int d;
 int artcnt;
-int ttlSetcions;
 int dcheck;
 
 @interface ACTableView ()
@@ -35,7 +34,7 @@ int dcheck;
       return self;
 }
 
-
+#pragma mark - View_Life_Cycle
 - (void)viewDidLoad {
       [super viewDidLoad];
 
@@ -59,21 +58,18 @@ int dcheck;
 
 
             //Array Memory Allocation
-	art = [[NSMutableArray alloc]init];
+	ExpandCellArray = [[NSMutableArray alloc]init];
       sections = [[NSMutableArray alloc]init];
       ListOfItems = [[NSMutableArray alloc] init];
-      temp = [[NSArray alloc]init];
-	nameListArray = [[NSMutableArray alloc]init];
+
+
 
 	tab.tableFooterView = [[[UIView alloc] initWithFrame:CGRectZero]autorelease];//Table Show the cell which contains data only
 
 	[tab setSeparatorColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];//Table Cel seperator color changed
 
-
-
-	NSArray *cleanedArray = nil;
-
             /***********************Add your data to be dislayed over the cells*******************/
+       NSMutableArray *nameListArray = [[NSMutableArray alloc]init];
 	[nameListArray addObject:@"Anil"];
 	[nameListArray addObject:@"Ajay"];
 	[nameListArray addObject:@"Abneet"];
@@ -105,29 +101,24 @@ int dcheck;
 	[nameListArray addObject:@"pawan"];
             /***********************************************************************************/
 
-	/*-----captilaises the first char in string and replace array-----*/
-	for (int y = 0; y < [nameListArray count]; y++) {
-		NSString *letr = [nameListArray objectAtIndex:y];
-		NSString *capitalisedSentence = [letr stringByReplacingCharactersInRange:NSMakeRange(0, 1)
-		                                                              withString:[[letr substringToIndex:1] capitalizedString]];
-		[nameListArray replaceObjectAtIndex:y withObject:capitalisedSentence];
-	}
-
 	for (int e = 0; e < [nameListArray count]; e++) {
 		char alphabet = [[nameListArray objectAtIndex:e] characterAtIndex:0];
 		NSString *uniChar = [NSString stringWithFormat:@"%c", alphabet];
 
 		[sections addObject:uniChar];
-		cleanedArray = [[NSSet setWithArray:sections] allObjects];
-		[sections removeAllObjects];
-		[sections addObjectsFromArray:cleanedArray];
-		sortArray = [sections sortedArrayUsingSelector:@selector(compare:)];
-	}
-	NSLog(@"%@", sortArray);
+
+      }
+	NSArray *cleanedArray = [[NSSet setWithArray:sections] allObjects];
+	NSArray *sortedSection = [(NSMutableArray *)cleanedArray sortedArrayUsingSelector:@selector(compare:)];
+      sections = [sortedSection mutableCopy];
+
+
+
 
 	/*****filterate the array*******/
-	for (int i = 0; i < [sortArray count]; i++) {
-		char alphabet = [[sortArray objectAtIndex:i] characterAtIndex:0];
+      NSArray *temp = [[NSArray alloc]init];
+	for (int i = 0; i < [sections count]; i++) {
+		char alphabet = [[sections objectAtIndex:i] characterAtIndex:0];
 		NSString *uniChar = [NSString stringWithFormat:@"%c", alphabet];
 		NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF beginswith[c] %@", uniChar];
 		temp = [nameListArray filteredArrayUsingPredicate:predicate];
@@ -139,20 +130,18 @@ int dcheck;
 
 	NSLog(@"cleaned array%@", ListOfItems);
 	NSLog(@"cleaned array%@", sections);
-	sections = (NSMutableArray *)sortArray;
 
 
-	firsttime = TRUE;
 
-	sections = [[NSMutableArray alloc]initWithArray:sortArray];
-	ttlSetcions = sections.count;
+	firsttime = TRUE;//When the view appears for the first time
 
 
-	fiji = [[NSArray alloc]initWithObjects:@"1", nil];
-	art1 = [[NSMutableArray alloc]init];
-	for (int k = 0; k < ttlSetcions; k++) {
-		[art insertObject:fiji atIndex:k];
-		[art1 addObject:@"NO"];
+
+	NSArray *oneArray = [[NSArray alloc]initWithObjects:@"1", nil];
+	isExpanded = [[NSMutableArray alloc]init];
+	for (int k = 0; k < sections.count; k++) {
+		[ExpandCellArray insertObject:oneArray atIndex:k];
+		[isExpanded addObject:@"NO"];
 	}
 
 
@@ -160,43 +149,6 @@ int dcheck;
 
 
 
-- (void)buttonPressed:(UIButton *)sender {
-	if ([[art1 objectAtIndex:sender.tag]isEqualToString:@"NO"]) {
-		[art1 replaceObjectAtIndex:sender.tag withObject:@"YES"];
-		expanded = TRUE;
-	}
-	else {
-		[art1 replaceObjectAtIndex:sender.tag withObject:@"NO"];
-		expanded = FALSE;
-	}
-
-	firsttime = FALSE;
-	secondtime = TRUE;
-	NSLog(@"%i", sender.tag);
-	NSArray *fgt = [ListOfItems objectAtIndex:sender.tag];
-	[art replaceObjectAtIndex:sender.tag withObject:fgt];
-	NSLog(@"%@", art);
-	NSLog(@"%@", sections);
-	d = sender.tag;
-
-	if (expanded) {
-		NSMutableArray *indexPathsInsert = [[[NSMutableArray alloc] init] autorelease];
-		NSArray *fge = [art objectAtIndex:sender.tag];
-		for (int i = 0; i < [fge count]; i++)
-			[indexPathsInsert addObject:[NSIndexPath indexPathForRow:i inSection:d]];
-		[tab insertRowsAtIndexPaths:indexPathsInsert withRowAnimation:UITableViewRowAnimationTop];
-	}
-	else {
-		NSMutableArray *indexPathsDelete = [[[NSMutableArray alloc] init] autorelease];
-		NSArray *fge = [art objectAtIndex:sender.tag];
-		for (int i = 0; i < [fge count]; i++)
-			[indexPathsDelete addObject:[NSIndexPath indexPathForRow:i inSection:d]];
-		[art insertObject:fiji atIndex:sender.tag];
-		[art removeObjectAtIndex:sender.tag + 1];
-		[tab deleteRowsAtIndexPaths:indexPathsDelete withRowAnimation:UITableViewRowAnimationTop];
-	}
-	[tab endUpdates];
-}
 
 
 #pragma mark - TabeView Datasource & Delegates
@@ -205,18 +157,18 @@ int dcheck;
 		return 0;
 	}
 	if (secondtime) {
-		int b;
-		NSArray *rty = [art objectAtIndex:section];
+		int countRow;
+		NSArray *countArray = [ExpandCellArray objectAtIndex:section];
 
 
-		if ([[rty objectAtIndex:0] isEqualToString:@"1"]) {
-			b = 0;
+		if ([[countArray objectAtIndex:0] isEqualToString:@"1"]) {
+			countRow = 0;
 		}
 
 		else {
-			b = rty.count;
+			countRow = countArray.count;
 		}
-		return b;
+		return countRow;
 	}
 
 	return 0;
@@ -230,7 +182,7 @@ int dcheck;
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
 	}
-	NSMutableArray *fgtr = [art objectAtIndex:indexPath.section];
+	NSMutableArray *fgtr = [ExpandCellArray objectAtIndex:indexPath.section];
 
       cell.textLabel.font=[UIFont fontWithName:@"Avenir-Book" size:15];
 	cell.textLabel.textColor = [UIColor blackColor];
@@ -239,15 +191,11 @@ int dcheck;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return ttlSetcions;
+	return sections.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
 	return 50;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	NSLog(@"Rashdash");
 }
 
 /***********************Header to be expanded*******************************/
@@ -272,6 +220,61 @@ int dcheck;
 	[headerView setBackgroundColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];
 
 	return headerView;
+}
+
+
+      /***************************Seect the Element from the table*************************/
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath   *)indexPath
+{
+      NSLog(@"Array Containing Row = %@",[ListOfItems objectAtIndex:indexPath.section]);
+      NSLog(@"Array Containing Element = %@",[[ListOfItems objectAtIndex:indexPath.section]objectAtIndex:indexPath.row]);
+      [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
+}
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+      NSLog(@"Rashdash Unselected");
+      [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+}
+
+#pragma mark - Action For Expanding the Tableview
+- (void)buttonPressed:(UIButton *)sender {
+	if ([[isExpanded objectAtIndex:sender.tag]isEqualToString:@"NO"]) {
+		[isExpanded replaceObjectAtIndex:sender.tag withObject:@"YES"];
+		expanded = TRUE;
+	}
+	else {
+		[isExpanded replaceObjectAtIndex:sender.tag withObject:@"NO"];
+		expanded = FALSE;
+	}
+
+	firsttime = FALSE;
+	secondtime = TRUE;
+	NSLog(@"%i", sender.tag);
+	NSArray *fgt = [ListOfItems objectAtIndex:sender.tag];
+	[ExpandCellArray replaceObjectAtIndex:sender.tag withObject:fgt];
+	NSLog(@"%@", ExpandCellArray);
+	NSLog(@"%@", sections);
+	d = sender.tag;
+
+	if (expanded) {
+		NSMutableArray *indexPathsInsert = [[[NSMutableArray alloc] init] autorelease];
+		NSArray *fge = [ExpandCellArray objectAtIndex:sender.tag];
+		for (int i = 0; i < [fge count]; i++)
+			[indexPathsInsert addObject:[NSIndexPath indexPathForRow:i inSection:d]];
+		[tab insertRowsAtIndexPaths:indexPathsInsert withRowAnimation:UITableViewRowAnimationTop];
+	}
+	else {
+		NSMutableArray *indexPathsDelete = [[[NSMutableArray alloc] init] autorelease];
+		NSArray *fge = [ExpandCellArray objectAtIndex:sender.tag];
+		for (int i = 0; i < [fge count]; i++)
+			[indexPathsDelete addObject:[NSIndexPath indexPathForRow:i inSection:d]];
+            NSArray *oneArray = [[NSArray alloc]initWithObjects:@"1", nil];
+		[ExpandCellArray insertObject:oneArray atIndex:sender.tag];
+		[ExpandCellArray removeObjectAtIndex:sender.tag + 1];
+		[tab deleteRowsAtIndexPaths:indexPathsDelete withRowAnimation:UITableViewRowAnimationTop];
+	}
+	[tab endUpdates];
 }
 
 - (void)didReceiveMemoryWarning {

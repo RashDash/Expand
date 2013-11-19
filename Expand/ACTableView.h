@@ -8,23 +8,15 @@
 
 @interface ACTableView : UIViewController<UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate>
 {
-      NSMutableArray *art1;
-      NSArray *fiji ;
-      IBOutlet UITableView *tab;
-      BOOL expanded;
-      NSMutableArray *nameListArray;
+      NSMutableArray *isExpanded;
+      IBOutlet UITableView *tab;//TableView Outlet
+      BOOL expanded;//Boolean to Check Expansion
       NSMutableArray *tmpArray;
       NSMutableArray *ListOfItems;
-      NSArray *temp;
       NSMutableArray *sections;
-      NSIndexPath *indexP;
-      BOOL searching;
-      NSIndexPath *indexS ;
-      NSMutableArray *art;
+      NSMutableArray *ExpandCellArray;
       BOOL letUserSelectRow;
-      NSMutableArray *Mycopy_list;
-      NSArray * sortArray;
       NSMutableArray * listOfName;
-      BOOL firsttime,secondtime;
+      BOOL firsttime,secondtime;//Boolean to Check first time load and then next ones of TableView
 }
 @end
