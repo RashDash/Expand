@@ -14,15 +14,13 @@
       BOOL expanded;
       NSMutableArray *nameListArray;
       NSMutableArray *tmpArray;
-      IBOutlet UISearchBar *serchMe;
-      NSMutableArray    *ListOfItems;
+      NSMutableArray *ListOfItems;
       NSArray *temp;
       NSMutableArray *sections;
       NSIndexPath *indexP;
       BOOL searching;
       NSIndexPath *indexS ;
       NSMutableArray *art;
-      IBOutlet UISearchBar *seacrhBar;
       BOOL letUserSelectRow;
       NSMutableArray *Mycopy_list;
       NSArray * sortArray;

@@ -8,11 +8,10 @@
 #import "ACTableView.h"
 
 int d;
-int ad;
 int artcnt;
 int ttlSetcions;
-int hideShow;
 int dcheck;
+
 @interface ACTableView ()
 
 @end
@@ -25,82 +24,56 @@ int dcheck;
             CGRect screenRect = [[UIScreen mainScreen] bounds];
             CGFloat screenHeight = screenRect.size.height;
             if (screenHeight == 480) {
-
+                        //Retina - 3.5
                   self = [super initWithNibName:@"ACTableView4" bundle:nibBundleOrNil];
             }
-
             else {
+                        //Retina - 4
                   self = [super initWithNibName:@"ACTableView" bundle:nibBundleOrNil];
             }
       }
       return self;
 }
-- (void)someAction {
-	if (hideShow == 0) {
-		[UIView beginAnimations:nil context:NULL];
-		[UIView setAnimationDuration:0.4f];
-		tab.frame = CGRectMake(0, 44, 320, 504);
-		serchMe.frame = CGRectMake(0, 0, 320, 44);
-		[UIView commitAnimations];
-		hideShow++;
-	}
-	else {
-		[UIView beginAnimations:nil context:NULL];
-		[UIView setAnimationDuration:0.4f];
-		tab.frame = CGRectMake(0, 0, 320, 504);
-		serchMe.frame = CGRectMake(0, -44, 320, 44);
-		[UIView commitAnimations];
-		hideShow--;
-	}
-}
 
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-	[self.view endEditing:YES];
-}
 
 - (void)viewDidLoad {
+      [super viewDidLoad];
+
+            //Self View Title
+      self.title = @"Expand the Cell";
+
+            //Check for iOS 7
       if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
           {
             self.edgesForExtendedLayout = UIRectEdgeNone;
             self.automaticallyAdjustsScrollViewInsets = NO;
           }
-      else
-          {
 
-          }
-      [tab setBackgroundColor:[UIColor clearColor]];
+            //Gradient layer set over the View
       CAGradientLayer *gradient = [CAGradientLayer layer];
       gradient.frame = self.view.bounds;
       gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor grayColor] CGColor], (id)[[UIColor whiteColor] CGColor], nil];
       [self.view.layer insertSublayer:gradient atIndex:0];
 
-	hideShow = 0;
-	UIImage *myIcon = [UIImage imageNamed:@"Icon-Small.png"];
+      [tab setBackgroundColor:[UIColor clearColor]];//Tabel background cleared
 
-	[self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithImage:myIcon
-	                                                                            style:UIBarButtonItemStyleBordered target:self action:@selector(someAction)]];
 
-	self.title = @"Expand the Cell";
+            //Array Memory Allocation
 	art = [[NSMutableArray alloc]init];
-	tab.tableFooterView = [[[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 10.0f)] autorelease];
-	[tab setSeparatorColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];
-	[super viewDidLoad];
+      sections = [[NSMutableArray alloc]init];
+      ListOfItems = [[NSMutableArray alloc] init];
+      temp = [[NSArray alloc]init];
+	nameListArray = [[NSMutableArray alloc]init];
 
-	if (tmpArray == nil) {
-		tmpArray = [[NSMutableArray alloc] init];
-	}
-	NSArray *tempArray = [NSArray arrayWithArray:
-	                      [@"A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|#"
-                             componentsSeparatedByString: @"|"]];
-	tmpArray = [tempArray copy];
+	tab.tableFooterView = [[[UIView alloc] initWithFrame:CGRectZero]autorelease];//Table Show the cell which contains data only
+
+	[tab setSeparatorColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];//Table Cel seperator color changed
+
 
 
 	NSArray *cleanedArray = nil;
-	sections = [[NSMutableArray alloc]init];
-	ListOfItems = [[NSMutableArray alloc] init];
-	temp = [[NSArray alloc]init];
-	nameListArray = [[NSMutableArray alloc]init];
 
+            /***********************Add your data to be dislayed over the cells*******************/
 	[nameListArray addObject:@"Anil"];
 	[nameListArray addObject:@"Ajay"];
 	[nameListArray addObject:@"Abneet"];
@@ -130,10 +103,9 @@ int dcheck;
 	[nameListArray addObject:@"Ashu"];
 	[nameListArray addObject:@"puspender"];
 	[nameListArray addObject:@"pawan"];
+            /***********************************************************************************/
 
-	ad = 0;
 	/*-----captilaises the first char in string and replace array-----*/
-
 	for (int y = 0; y < [nameListArray count]; y++) {
 		NSString *letr = [nameListArray objectAtIndex:y];
 		NSString *capitalisedSentence = [letr stringByReplacingCharactersInRange:NSMakeRange(0, 1)
@@ -182,45 +154,11 @@ int dcheck;
 		[art insertObject:fiji atIndex:k];
 		[art1 addObject:@"NO"];
 	}
-            // Do any additional setup after loading the view, typically from a nib.
+
+
 }
 
-- (NSInteger)         tableView:(UITableView *)tableView
-    sectionForSectionIndexTitle:(NSString *)title
-                        atIndex:(NSInteger)index {
-	if (index == 0) {
-		[tableView setContentOffset:CGPointZero animated:NO];
-		return NSNotFound;
-	}
-	return index;
-}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-	return 50;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 48)];
-	UIButton *headerBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	headerBtn.frame = CGRectMake(1.0, 1, 319.0, 47.0);
-	[headerBtn addTarget:self
-                    action:@selector(buttonPressed:)
-          forControlEvents:UIControlEventTouchDown];
-	headerBtn.tag = section;
-	UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 15, 100, 20)];
-	[lb setBackgroundColor:[UIColor clearColor]];
-
-      lb.font=[UIFont fontWithName:@"Avenir-Book" size:15];
-	lb.text = [sections objectAtIndex:section];
-	lb.textColor = [UIColor whiteColor];
-	[headerBtn addSubview:lb];
-	[headerView addSubview:headerBtn];
-	headerView.layer.borderWidth = 1;
-	headerView.layer.borderColor = [[UIColor grayColor] CGColor];
-	[headerView setBackgroundColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];
-
-	return headerView;
-}
 
 - (void)buttonPressed:(UIButton *)sender {
 	if ([[art1 objectAtIndex:sender.tag]isEqualToString:@"NO"]) {
@@ -261,11 +199,7 @@ int dcheck;
 }
 
 
-#pragma mark - TabeView Datasource
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	NSLog(@"Rashdash");
-}
-
+#pragma mark - TabeView Datasource & Delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	if (firsttime) {
 		return 0;
@@ -305,11 +239,39 @@ int dcheck;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	if (secondtime) {
-		NSLog(@"Index Object Printed ::::: %@", [art objectAtIndex:1]);
-	}
-      
 	return ttlSetcions;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+	return 50;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	NSLog(@"Rashdash");
+}
+
+/***********************Header to be expanded*******************************/
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+	UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 48)];
+	UIButton *headerBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+	headerBtn.frame = CGRectMake(1.0, 1, 319.0, 47.0);
+	[headerBtn addTarget:self
+                    action:@selector(buttonPressed:)
+          forControlEvents:UIControlEventTouchDown];
+	headerBtn.tag = section;
+	UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 15, 100, 20)];
+	[lb setBackgroundColor:[UIColor clearColor]];
+
+      lb.font=[UIFont fontWithName:@"Avenir-Book" size:15];
+	lb.text = [sections objectAtIndex:section];
+	lb.textColor = [UIColor whiteColor];
+	[headerBtn addSubview:lb];
+	[headerView addSubview:headerBtn];
+	headerView.layer.borderWidth = 1;
+	headerView.layer.borderColor = [[UIColor grayColor] CGColor];
+	[headerView setBackgroundColor:[UIColor colorWithRed:0.0f / 255.0f green:0.0f / 255.0f blue:0.0f / 255.0f alpha:0.9f]];
+
+	return headerView;
 }
 
 - (void)didReceiveMemoryWarning {
